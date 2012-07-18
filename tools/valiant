@@ -1,0 +1,29 @@
+#!/bin/bash 
+#
+# if a parameter is given then this is considered a file.
+
+echo "Starting valiant tool..."
+
+if [ -z $VALIANT_CONFIG ]; then
+  CONFIG="/etc/valiant/valiant.properties";
+else 
+  CONFIG=$VALIANT_CONFIG
+fi
+
+LOG="valiant.log"
+VCLASSPATH=".:/etc/valiant:/usr/lib/valiant/be/tenforce/lod2/valiant:/usr/lib/valiant/be/tenforce/lod2/valiant/virtuoso:/usr/lib/valiant/be/tenforce/lod2/valiant/webdav:/usr/lib/valiant:/usr/lib/valiant/lib/*"
+if [ -n "$VALIANT_XSLT_LIB" ]; then 
+VCLASSPATH=$VCLASSPATH:$VALIANT_XSLT_LIB;
+fi
+if [ -n "$VALIANT_XML_LIB" ]; then 
+VCLASSPATH=$VCLASSPATH:$VALIANT_XML_LIB;
+fi
+
+echo $VCLASSPATH
+
+if [[ $# > 0 ]] ;  then 
+java -Xms300M -Xmx1024M -classpath "$VCLASSPATH" -Dfile.encoding="UTF-8" -Dvaliant.config="file://$CONFIG" -Dvaliant.log=$LOG be.tenforce.lod2.valiant.ValiantStarter $1 ;
+else
+java -Xms300M -Xmx1024M -classpath "$VCLASSPATH" -Dfile.encoding="UTF-8" -Dvaliant.config="file://$CONFIG" -Dvaliant.log=$LOG be.tenforce.lod2.valiant.ValiantStarter  ;
+fi
+
